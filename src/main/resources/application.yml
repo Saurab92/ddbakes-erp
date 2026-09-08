@@ -15,3 +15,7 @@ spring:
 
 server:
   port: ${SERVER_PORT:8080}
+
+jwt:
+  secret: ${JWT_SECRET:change-this-super-secret-key-please-override-in-prod-min-32-bytes}
+  access-token-expiration-ms: ${JWT_ACCESS_TOKEN_EXPIRATION_MS:864000000}

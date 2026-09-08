@@ -8,6 +8,7 @@ import com.bakery.inventory.entity.User;
 import com.bakery.inventory.mapper.UserMapper;
 import com.bakery.inventory.repository.UserRepository;
 import com.bakery.inventory.service.UserService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,10 +21,12 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -37,6 +40,7 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = userMapper.toUserEntity(request);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setCreatedBy(currentUserId);
         user.setUpdatedBy(currentUserId);
 
@@ -85,6 +89,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserResponse reactivateUser(Long userId, Long currentUserId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userId));
+
+        user.setActive(Boolean.TRUE);
+        user.setUpdatedBy(currentUserId);
+        User updatedUser = userRepository.save(user);
+        return userMapper.toUserResponse(updatedUser);
+    }
+
+    @Override
     public void deleteUser(Long userId) {
         if (!userRepository.existsById(userId)) {
             throw new IllegalArgumentException("User not found with id: " + userId);
@@ -114,11 +129,11 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userId));
 
-        if (!user.getPassword().equals(request.getOldPassword())) {
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
             throw new IllegalArgumentException("Old password is incorrect");
         }
 
-        user.setPassword(request.getNewPassword());
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         User updatedUser = userRepository.save(user);
         return userMapper.toUserResponse(updatedUser);
     }

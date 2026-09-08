@@ -15,6 +15,8 @@ public interface UserService {
 
     UserResponse deactivateUser(Long userId, Long currentUserId);
 
+    UserResponse reactivateUser(Long userId, Long currentUserId);
+
     void deleteUser(Long userId);
 
     List<UserResponse> getAllUsers();

@@ -20,6 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Only SUPER_ADMIN can reach these endpoints - enforced centrally by
+ * {@link com.bakery.inventory.config.SecurityConfig}, so no per-method role
+ * check is needed here.
+ */
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -33,26 +38,19 @@ public class UserController {
     @PostMapping
     public ResponseEntity<UserResponse> createUser(
             @Valid @RequestBody UserCreateRequest request,
-            @RequestHeader("X-User-Id") Long currentUserId,
-            @RequestHeader("X-User-Role") String currentUserRole) {
-        verifyAdminRole(currentUserRole);
+            @RequestHeader("X-User-Id") Long currentUserId) {
         UserResponse response = userService.createUser(request, currentUserId);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping
-    public ResponseEntity<List<UserResponse>> getAllUsers(
-            @RequestHeader("X-User-Role") String currentUserRole) {
-        verifyAdminRole(currentUserRole);
+    public ResponseEntity<List<UserResponse>> getAllUsers() {
         List<UserResponse> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponse> getUserById(
-            @PathVariable Long id,
-            @RequestHeader("X-User-Role") String currentUserRole) {
-        verifyAdminRole(currentUserRole);
+    public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
         UserResponse user = userService.getUserById(id);
         return ResponseEntity.ok(user);
     }
@@ -61,9 +59,7 @@ public class UserController {
     public ResponseEntity<UserResponse> updateUser(
             @PathVariable Long id,
             @Valid @RequestBody UserUpdateRequest request,
-            @RequestHeader("X-User-Id") Long currentUserId,
-            @RequestHeader("X-User-Role") String currentUserRole) {
-        verifyAdminRole(currentUserRole);
+            @RequestHeader("X-User-Id") Long currentUserId) {
         UserResponse response = userService.updateUser(id, request, currentUserId);
         return ResponseEntity.ok(response);
     }
@@ -71,18 +67,21 @@ public class UserController {
     @PutMapping("/{id}/deactivate")
     public ResponseEntity<UserResponse> deactivateUser(
             @PathVariable Long id,
-            @RequestHeader("X-User-Id") Long currentUserId,
-            @RequestHeader("X-User-Role") String currentUserRole) {
-        verifyAdminRole(currentUserRole);
+            @RequestHeader("X-User-Id") Long currentUserId) {
         UserResponse response = userService.deactivateUser(id, currentUserId);
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(
+    @PutMapping("/{id}/reactivate")
+    public ResponseEntity<UserResponse> reactivateUser(
             @PathVariable Long id,
-            @RequestHeader("X-User-Role") String currentUserRole) {
-        verifyAdminRole(currentUserRole);
+            @RequestHeader("X-User-Id") Long currentUserId) {
+        UserResponse response = userService.reactivateUser(id, currentUserId);
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
@@ -90,16 +89,8 @@ public class UserController {
     @PutMapping("/{id}/change-password")
     public ResponseEntity<UserResponse> changePassword(
             @PathVariable Long id,
-            @Valid @RequestBody ChangePasswordRequest request,
-            @RequestHeader("X-User-Role") String currentUserRole) {
-        verifyAdminRole(currentUserRole);
+            @Valid @RequestBody ChangePasswordRequest request) {
         UserResponse response = userService.changePassword(id, request);
         return ResponseEntity.ok(response);
-    }
-
-    private void verifyAdminRole(String role) {
-        if (role == null || !role.equals("SUPER_ADMIN")) {
-            throw new IllegalArgumentException("Only SUPER_ADMIN role can perform this operation");
-        }
     }
 }
