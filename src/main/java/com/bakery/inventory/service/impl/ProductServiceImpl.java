@@ -1,6 +1,7 @@
 package com.bakery.inventory.service.impl;
 
 import com.bakery.inventory.dto.ProductCreateRequest;
+import com.bakery.inventory.dto.ProductListResponse;
 import com.bakery.inventory.dto.ProductResponse;
 import com.bakery.inventory.dto.ProductUpdateRequest;
 import com.bakery.inventory.entity.Category;
@@ -71,11 +72,12 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ProductResponse> getAllProducts() {
-        return productRepository.findAll()
+    public ProductListResponse getAllProducts() {
+        List<ProductResponse> products = productRepository.findAll()
                 .stream()
                 .map(productMapper::toResponse)
                 .collect(Collectors.toList());
+        return new ProductListResponse(products);
     }
 
     @Override

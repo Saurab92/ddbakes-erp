@@ -10,6 +10,8 @@ public class StockResponse {
     private String productName;
     private Long categoryId;
     private String categoryName;
+    private Long unitId;
+    private String unitName;
     private BigDecimal quantity;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -19,12 +21,14 @@ public class StockResponse {
     public StockResponse() {
     }
 
-    public StockResponse(Long id, Long productId, String productName, Long categoryId, String categoryName, BigDecimal quantity, LocalDateTime createdAt, LocalDateTime updatedAt, Long createdBy, Long updatedBy) {
+    public StockResponse(Long id, Long productId, String productName, Long categoryId, String categoryName, Long unitId, String unitName, BigDecimal quantity, LocalDateTime createdAt, LocalDateTime updatedAt, Long createdBy, Long updatedBy) {
         this.id = id;
         this.productId = productId;
         this.productName = productName;
         this.categoryId = categoryId;
         this.categoryName = categoryName;
+        this.unitId = unitId;
+        this.unitName = unitName;
         this.quantity = quantity;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -70,6 +74,22 @@ public class StockResponse {
 
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
+    }
+
+    public Long getUnitId() {
+        return unitId;
+    }
+
+    public void setUnitId(Long unitId) {
+        this.unitId = unitId;
+    }
+
+    public String getUnitName() {
+        return unitName;
+    }
+
+    public void setUnitName(String unitName) {
+        this.unitName = unitName;
     }
 
     public BigDecimal getQuantity() {

@@ -1,5 +1,6 @@
 package com.bakery.inventory.controller;
 
+import com.bakery.inventory.dto.LowStockResponse;
 import com.bakery.inventory.dto.StockCreateRequest;
 import com.bakery.inventory.dto.StockResponse;
 import com.bakery.inventory.dto.StockUpdateRequest;
@@ -30,6 +31,12 @@ public class StockController {
     public ResponseEntity<StockResponse> createStock(@Valid @RequestBody StockCreateRequest request) {
         StockResponse response = stockService.createStock(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping("/low-stock")
+    public ResponseEntity<LowStockResponse> getLowStockItems() {
+        LowStockResponse response = stockService.getLowStockItems();
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{stockId}")

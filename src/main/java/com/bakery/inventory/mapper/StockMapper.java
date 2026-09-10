@@ -17,6 +17,8 @@ public class StockMapper {
                 stock.getProduct().getName(),
                 stock.getProduct().getCategory() != null ? stock.getProduct().getCategory().getId() : null,
                 stock.getProduct().getCategory() != null ? stock.getProduct().getCategory().getName() : null,
+                stock.getProduct().getUnit() != null ? stock.getProduct().getUnit().getId() : null,
+                stock.getProduct().getUnit() != null ? stock.getProduct().getUnit().getName() : null,
                 stock.getQuantity(),
                 stock.getCreatedAt(),
                 stock.getUpdatedAt(),

@@ -1,6 +1,7 @@
 package com.bakery.inventory.controller;
 
 import com.bakery.inventory.dto.ProductCreateRequest;
+import com.bakery.inventory.dto.ProductListResponse;
 import com.bakery.inventory.dto.ProductResponse;
 import com.bakery.inventory.dto.ProductUpdateRequest;
 import com.bakery.inventory.service.ProductService;
@@ -16,8 +17,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
@@ -36,7 +35,7 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductResponse>> getAllProducts() {
+    public ResponseEntity<ProductListResponse> getAllProducts() {
         return ResponseEntity.ok(productService.getAllProducts());
     }
 

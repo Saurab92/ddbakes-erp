@@ -1,5 +1,6 @@
 package com.bakery.inventory.service;
 
+import com.bakery.inventory.dto.LowStockResponse;
 import com.bakery.inventory.dto.StockCreateRequest;
 import com.bakery.inventory.dto.StockResponse;
 import com.bakery.inventory.dto.StockUpdateRequest;
@@ -15,4 +16,6 @@ public interface StockService {
     StockResponse updateStock(Long stockId, StockUpdateRequest request);
 
     void deleteStock(Long stockId);
+
+    LowStockResponse getLowStockItems();
 }

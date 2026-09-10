@@ -1,5 +1,6 @@
 package com.bakery.inventory.service.impl;
 
+import com.bakery.inventory.dto.LowStockResponse;
 import com.bakery.inventory.dto.StockCreateRequest;
 import com.bakery.inventory.dto.StockResponse;
 import com.bakery.inventory.dto.StockUpdateRequest;
@@ -12,6 +13,9 @@ import com.bakery.inventory.repository.StockRepository;
 import com.bakery.inventory.service.StockService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -76,5 +80,16 @@ public class StockServiceImpl implements StockService {
                 .orElseThrow(() -> new ResourceNotFoundException("Stock not found with id: " + stockId));
 
         stockRepository.delete(stock);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public LowStockResponse getLowStockItems() {
+        List<Stock> lowStockItems = stockRepository.findLowStockItems();
+        List<StockResponse> responses = lowStockItems.stream()
+                .map(stockMapper::toResponse)
+                .collect(Collectors.toList());
+
+        return new LowStockResponse(responses.size(), responses);
     }
 }
