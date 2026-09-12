@@ -78,7 +78,8 @@ public class SecurityConfig {
                                 "/api/purchases/**",
                                 "/api/stocks/**",
                                 "/api/issues/**",
-                                "/api/suppliers/**")
+                                "/api/suppliers/**",
+                                "/api/products/**")
                         .hasAnyAuthority("SUPER_ADMIN", "OP_MANAGER")
                         .anyRequest().hasAuthority("SUPER_ADMIN")
                 )
