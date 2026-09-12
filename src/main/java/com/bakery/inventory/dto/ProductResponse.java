@@ -2,6 +2,7 @@ package com.bakery.inventory.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Response payload representing a product.
@@ -18,6 +19,7 @@ public class ProductResponse {
     private Boolean active;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private List<SupplierSummaryResponse> suppliers;
 
     public Long getId() {
         return id;
@@ -97,5 +99,13 @@ public class ProductResponse {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public List<SupplierSummaryResponse> getSuppliers() {
+        return suppliers;
+    }
+
+    public void setSuppliers(List<SupplierSummaryResponse> suppliers) {
+        this.suppliers = suppliers;
     }
 }

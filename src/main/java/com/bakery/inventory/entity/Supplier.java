@@ -5,11 +5,14 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Entity for suppliers providing goods/materials to the bakery.
@@ -36,6 +39,9 @@ public class Supplier {
 
     @Column(length = 500)
     private String address;
+
+    @ManyToMany(mappedBy = "suppliers", fetch = jakarta.persistence.FetchType.LAZY)
+    private Set<Product> products = new HashSet<>();
 
     @Column(nullable = false)
     private Boolean active = Boolean.TRUE;
@@ -116,6 +122,14 @@ public class Supplier {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public Set<Product> getProducts() {
+        return products;
+    }
+
+    public void setProducts(Set<Product> products) {
+        this.products = products;
     }
 
     public Boolean getActive() {

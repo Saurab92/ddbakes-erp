@@ -4,6 +4,7 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * Request payload for updating a product. All fields are optional; only
@@ -22,6 +23,8 @@ public class ProductUpdateRequest {
     private BigDecimal minimumStock;
 
     private Boolean active;
+
+    private List<Long> supplierIds;
 
     public String getName() {
         return name;
@@ -61,5 +64,13 @@ public class ProductUpdateRequest {
 
     public void setActive(Boolean active) {
         this.active = active;
+    }
+
+    public List<Long> getSupplierIds() {
+        return supplierIds;
+    }
+
+    public void setSupplierIds(List<Long> supplierIds) {
+        this.supplierIds = supplierIds;
     }
 }

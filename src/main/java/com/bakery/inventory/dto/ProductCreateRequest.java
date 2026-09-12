@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * Request payload for creating a product.
@@ -26,6 +27,8 @@ public class ProductCreateRequest {
     private BigDecimal minimumStock;
 
     private Boolean active;
+
+    private List<Long> supplierIds;
 
     public String getName() {
         return name;
@@ -65,5 +68,13 @@ public class ProductCreateRequest {
 
     public void setActive(Boolean active) {
         this.active = active;
+    }
+
+    public List<Long> getSupplierIds() {
+        return supplierIds;
+    }
+
+    public void setSupplierIds(List<Long> supplierIds) {
+        this.supplierIds = supplierIds;
     }
 }

@@ -1,6 +1,7 @@
 package com.bakery.inventory.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Response payload representing a supplier.
@@ -16,6 +17,7 @@ public class SupplierResponse {
     private Boolean active;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private List<ProductSummaryResponse> products;
 
     public Long getId() {
         return id;
@@ -87,5 +89,13 @@ public class SupplierResponse {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public List<ProductSummaryResponse> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<ProductSummaryResponse> products) {
+        this.products = products;
     }
 }

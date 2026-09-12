@@ -3,6 +3,7 @@ package com.bakery.inventory.controller;
 import com.bakery.inventory.dto.ProductCreateRequest;
 import com.bakery.inventory.dto.ProductListResponse;
 import com.bakery.inventory.dto.ProductResponse;
+import com.bakery.inventory.dto.ProductSuppliersUpdateRequest;
 import com.bakery.inventory.dto.ProductUpdateRequest;
 import com.bakery.inventory.service.ProductService;
 import jakarta.validation.Valid;
@@ -60,6 +61,13 @@ public class ProductController {
     @PatchMapping("/{id}/deactivate")
     public ResponseEntity<ProductResponse> deactivateProduct(@PathVariable Long id) {
         ProductResponse response = productService.deactivateProduct(id);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{id}/suppliers")
+    public ResponseEntity<ProductResponse> updateProductSuppliers(@PathVariable Long id,
+                                                                    @Valid @RequestBody ProductSuppliersUpdateRequest request) {
+        ProductResponse response = productService.updateProductSuppliers(id, request);
         return ResponseEntity.ok(response);
     }
 }

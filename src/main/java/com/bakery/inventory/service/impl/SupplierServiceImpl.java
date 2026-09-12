@@ -3,16 +3,20 @@ package com.bakery.inventory.service.impl;
 import com.bakery.inventory.dto.SupplierCreateRequest;
 import com.bakery.inventory.dto.SupplierResponse;
 import com.bakery.inventory.dto.SupplierUpdateRequest;
+import com.bakery.inventory.entity.Product;
 import com.bakery.inventory.entity.Supplier;
 import com.bakery.inventory.exception.DuplicateResourceException;
 import com.bakery.inventory.exception.ResourceNotFoundException;
 import com.bakery.inventory.mapper.SupplierMapper;
+import com.bakery.inventory.repository.ProductRepository;
 import com.bakery.inventory.repository.SupplierRepository;
 import com.bakery.inventory.service.SupplierService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,10 +24,14 @@ import java.util.stream.Collectors;
 public class SupplierServiceImpl implements SupplierService {
 
     private final SupplierRepository supplierRepository;
+    private final ProductRepository productRepository;
     private final SupplierMapper supplierMapper;
 
-    public SupplierServiceImpl(SupplierRepository supplierRepository, SupplierMapper supplierMapper) {
+    public SupplierServiceImpl(SupplierRepository supplierRepository,
+                                ProductRepository productRepository,
+                                SupplierMapper supplierMapper) {
         this.supplierRepository = supplierRepository;
+        this.productRepository = productRepository;
         this.supplierMapper = supplierMapper;
     }
 
@@ -43,6 +51,7 @@ public class SupplierServiceImpl implements SupplierService {
         supplier.setActive(request.getActive() != null ? request.getActive() : Boolean.TRUE);
 
         Supplier saved = supplierRepository.save(supplier);
+        syncProductLinks(saved, request.getProductIds());
         return supplierMapper.toResponse(saved);
     }
 
@@ -76,7 +85,49 @@ public class SupplierServiceImpl implements SupplierService {
         }
 
         Supplier updated = supplierRepository.save(supplier);
+        if (request.getProductIds() != null) {
+            syncProductLinks(updated, request.getProductIds());
+        }
         return supplierMapper.toResponse(updated);
+    }
+
+    /**
+     * Updates the owning side of the Product-Supplier relationship: adds this
+     * supplier to newly linked products and removes it from products that are
+     * no longer linked.
+     */
+    private void syncProductLinks(Supplier supplier, List<Long> productIds) {
+        Set<Product> desiredProducts = new HashSet<>();
+        if (productIds != null) {
+            for (Long productId : productIds) {
+                Product product = productRepository.findById(productId)
+                        .orElseThrow(() -> new ResourceNotFoundException("Product not found with id " + productId));
+                desiredProducts.add(product);
+            }
+        }
+
+        Set<Product> currentProducts = new HashSet<>(supplier.getProducts());
+
+        for (Product product : desiredProducts) {
+            if (!currentProducts.contains(product)) {
+                product.getSuppliers().add(supplier);
+            }
+        }
+        for (Product product : currentProducts) {
+            if (!desiredProducts.contains(product)) {
+                product.getSuppliers().remove(supplier);
+            }
+        }
+
+        Set<Product> affected = new HashSet<>(desiredProducts);
+        affected.addAll(currentProducts);
+        productRepository.saveAll(affected);
+
+        // Inverse side (mappedBy) is not auto-synced in-memory; update it so
+        // the mapped response reflects the change without a re-fetch.
+        Set<Product> supplierProducts = supplier.getProducts();
+        supplierProducts.clear();
+        supplierProducts.addAll(desiredProducts);
     }
 
     @Override
@@ -109,7 +160,7 @@ public class SupplierServiceImpl implements SupplierService {
     @Override
     @Transactional(readOnly = true)
     public List<SupplierResponse> getAllSuppliers() {
-        return supplierRepository.findAll()
+        return supplierRepository.findAllWithProducts()
                 .stream()
                 .map(supplierMapper::toResponse)
                 .collect(Collectors.toList());

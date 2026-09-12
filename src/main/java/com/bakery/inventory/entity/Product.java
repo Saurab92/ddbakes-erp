@@ -7,6 +7,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
@@ -14,6 +16,8 @@ import jakarta.persistence.Table;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "products")
@@ -36,6 +40,14 @@ public class Product {
 
     @Column(name = "minimum_stock", nullable = false, precision = 12, scale = 3)
     private BigDecimal minimumStock = BigDecimal.ZERO;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "product_suppliers",
+            joinColumns = @JoinColumn(name = "product_id", foreignKey = @jakarta.persistence.ForeignKey(name = "fk_product_suppliers_product")),
+            inverseJoinColumns = @JoinColumn(name = "supplier_id", foreignKey = @jakarta.persistence.ForeignKey(name = "fk_product_suppliers_supplier"))
+    )
+    private Set<Supplier> suppliers = new HashSet<>();
 
     @Column(nullable = false)
     private Boolean active = Boolean.TRUE;
@@ -105,6 +117,14 @@ public class Product {
 
     public void setMinimumStock(BigDecimal minimumStock) {
         this.minimumStock = minimumStock;
+    }
+
+    public Set<Supplier> getSuppliers() {
+        return suppliers;
+    }
+
+    public void setSuppliers(Set<Supplier> suppliers) {
+        this.suppliers = suppliers;
     }
 
     public Boolean getActive() {

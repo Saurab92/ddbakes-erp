@@ -3,6 +3,8 @@ package com.bakery.inventory.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 
+import java.util.List;
+
 /**
  * Request payload for updating a supplier. All fields are optional; only
  * non-null values are applied.
@@ -26,6 +28,8 @@ public class SupplierUpdateRequest {
     private String address;
 
     private Boolean active;
+
+    private List<Long> productIds;
 
     public String getName() {
         return name;
@@ -73,5 +77,13 @@ public class SupplierUpdateRequest {
 
     public void setActive(Boolean active) {
         this.active = active;
+    }
+
+    public List<Long> getProductIds() {
+        return productIds;
+    }
+
+    public void setProductIds(List<Long> productIds) {
+        this.productIds = productIds;
     }
 }
