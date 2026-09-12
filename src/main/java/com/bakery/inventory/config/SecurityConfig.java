@@ -77,7 +77,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/purchases/**",
                                 "/api/stocks/**",
-                                "/api/issues/**")
+                                "/api/issues/**",
+                                "/api/suppliers/**")
                         .hasAnyAuthority("SUPER_ADMIN", "OP_MANAGER")
                         .anyRequest().hasAuthority("SUPER_ADMIN")
                 )
