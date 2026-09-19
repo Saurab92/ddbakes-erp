@@ -15,6 +15,10 @@ import com.bakery.inventory.repository.IssueRepository;
 import com.bakery.inventory.repository.PersonRepository;
 import com.bakery.inventory.repository.ProductRepository;
 import com.bakery.inventory.repository.StockRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -122,13 +126,27 @@ public class IssueServiceImpl implements IssueService {
         return issueMapper.toIssueResponse(savedIssue);
     }
 
-    @Override
+//    @Override
+//    @Transactional(readOnly = true)
+//    public List<IssueResponse> getAllIssues() {
+//        List<Issue> issues = issueRepository.findAll();
+//        return issues.stream()
+//                .map(issueMapper::toIssueResponse)
+//                .collect(Collectors.toList());
+//    }
+
     @Transactional(readOnly = true)
-    public List<IssueResponse> getAllIssues() {
-        List<Issue> issues = issueRepository.findAll();
-        return issues.stream()
-                .map(issueMapper::toIssueResponse)
-                .collect(Collectors.toList());
+    public Page<IssueResponse> getAllIssues(int page, int size) {
+
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                Sort.by(Sort.Direction.DESC, "createdAt")
+        );
+
+        Page<Issue> issues = issueRepository.findAll(pageable);
+
+        return issues.map(issueMapper::toIssueResponse);
     }
 
     @Override
