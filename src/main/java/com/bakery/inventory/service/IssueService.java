@@ -2,6 +2,8 @@ package com.bakery.inventory.service;
 
 import com.bakery.inventory.dto.IssueCreateRequest;
 import com.bakery.inventory.dto.IssueResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -38,7 +40,7 @@ public interface IssueService {
      *
      * @return List of all issues
      */
-    List<IssueResponse> getAllIssues();
+    Page<IssueResponse> getAllIssues(int page, int size);
 
     /**
      * Get issue by ID.
